@@ -1,0 +1,52 @@
+{
+  "description": "This function fetches a file from a URL and converts its contents into a Base64 string, which can be used in PDF templates, as an image source, or for any other purpose that requires a Base64 encoded file.",
+  "label": "File to Base64",
+  "category": "Misc",
+  "icon": {
+    "name": "ActionsIcon",
+    "color": "Orange"
+  },
+  "options": [
+    {
+      "name": "fileURL",
+      "label": "File URL",
+      "info": "The URL of the file you want to convert to a Base64 string. This can be a file property (e.g. from a file upload component) or a plain text URL/variable.",
+      "meta": {
+        "type": "Value",
+        "allowedKinds": []
+      }
+    },
+    {
+      "name": "headers",
+      "label": "Headers",
+      "info": "Sometimes you may need to pass additional information to fetch the file, for example an Authorization token when the file URL is protected. This is possible by adding key/value pairs here.",
+      "meta": {
+        "type": "Map"
+      }
+    },
+    {
+      "name": "includeMimeType",
+      "label": "Include mime-type in output",
+      "info": "When turned on, the mime-type of the file (e.g. \"data:image/png;base64,\") is prefixed to the Base64 string, which is required when using the result directly in PDF templates or as an image source. When turned off, only the raw Base64 string is returned.",
+      "meta": {
+        "type": "Boolean",
+        "default": true
+      }
+    },
+    {
+      "name": "result",
+      "label": "Result",
+      "info": "The Base64 encoded string of the file.",
+      "meta": {
+        "type": "Output",
+        "validations": {
+          "required": true
+        },
+        "output": {
+          "type": "Text"
+        }
+      }
+    }
+  ],
+  "yields": "NONE"
+}
