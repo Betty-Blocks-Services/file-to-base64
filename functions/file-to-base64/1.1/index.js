@@ -67,14 +67,37 @@ const ArrayBufferToBase64 = (arrayBuffer) => {
   return base64;
 };
 
-const parseHeaders = (headers) =>
-  Object.fromEntries(headers.map(({ key, value }) => [key, value]));
+// Valid HTTP token chars, per RFC 7230 (field-name)
+const isValidHeaderName = (name) =>
+  typeof name === "string" && /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name);
+
+// No CR/LF or other control characters, per RFC 7230 (field-value)
+const isValidHeaderValue = (value) =>
+  typeof value === "string" && !/[\x00-\x08\x0A-\x1F\x7F]/.test(value);
+
+const buildHeaders = (headers) => {
+  const result = {};
+  for (const { key, value } of headers) {
+    if (!isValidHeaderName(key)) {
+      throw new Error(
+        `Invalid header name "${key}": header names must be non-empty and contain no whitespace or special characters.`
+      );
+    }
+    if (!isValidHeaderValue(value)) {
+      throw new Error(
+        `Invalid value for header "${key}": header values may not contain newlines or other control characters.`
+      );
+    }
+    result[key] = value;
+  }
+  return result;
+};
 
 const fileURLToBase64 = async ({ fileURL, includeMimeType, headers = [] }) => {
   const { url } = fileURL;
   const urlToUse = url ? url : fileURL;
   if (validURL(urlToUse)) {
-    const response = await fetch(urlToUse, { headers: parseHeaders(headers) });
+    const response = await fetch(urlToUse, { headers: buildHeaders(headers) });
     const mimeType = response.headers["content-type"][0];
 
     const { buffer } = await response.blob();
